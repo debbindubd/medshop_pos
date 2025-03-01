@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}POS - Medical Shop POS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Point of Sale</h2>
+    </div>
+    {% csrf_token %}
+    
+    <div class="row">
+        <!-- Medicine Panel -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <div class="row align-items-center">
+                        <div class="col-6">
+                            <h6 class="m-0 font-weight-bold text-primary">Select Medicine</h6>
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="search-medicine" class="form-control" placeholder="Search medicine...">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Category Filter -->
+                    <div class="p-3 bg-light border-bottom">
+                        <div class="d-flex overflow-auto">
+                            <a href="#" class="category-filter btn btn-sm btn-outline-primary me-2 active" data-category="all">All</a>
+                            {% for category in categories %}
+                                <a href="#" class="category-filter btn btn-sm btn-outline-primary me-2" data-category="{{ category.id }}">{{ category.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Medicine Grid -->
+                    <div class="p-3 pos-panel">
+                        <div class="row">
+                            {% for medicine in medicines %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card medicine-card" data-id="{{ medicine.id }}" data-category="{{ medicine.category.id }}">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title mb-1">{{ medicine.name }}</h6>
+                                            <p class="card-text text-primary mb-0">₹{{ medicine.price }}</p>
+                                            <small class="text-muted">{{ medicine.category.name }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cart Panel -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Current Sale</h6>
+                </div>
+                <div class="card-body d-flex flex-column h-100 p-0">
+                    <!-- Cart Items -->
+                    <div class="p-3 flex-grow-1 overflow-auto" style="max-height: calc(100vh - 370px);">
+                        <div id="cart-items">
+                            <!-- Cart items will be added here dynamically -->
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                                <p>Your cart is empty</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Cart Total -->
+                    <div class="border-top p-3 bg-light">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h5>Total:</h5>
+                            <h5>₹<span id="total-amount">0.00</span></h5>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="payment-method" class="form-label">Payment Method</label>
+                            <select class="form-select" id="payment-method">
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                                <option value="upi">UPI</option>
+                            </select>
+                        </div>
+                        
+                        <button id="checkout-btn" class="btn btn-success w-100 py-2">
+                            <i class="fas fa-check-circle me-2"></i> Complete Sale
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/pos.js"></script>
+{% endblock %}

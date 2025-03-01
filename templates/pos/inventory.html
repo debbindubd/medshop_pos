@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventory - Medical Shop POS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Inventory Management</h2>
+        <div>
+            <a href="{% url 'add_medicine' %}" class="btn btn-success me-2">
+                <i class="fas fa-plus-circle"></i> Add Medicine
+            </a>
+            <a href="{% url 'add_stock' %}" class="btn btn-primary">
+                <i class="fas fa-boxes"></i> Add Stock
+            </a>
+        </div>
+    </div>
+    
+    <!-- Inventory Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Current Stock</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-fixed-head">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Category</th>
+                            <th>Batch</th>
+                            <th>Quantity</th>
+                            <th>Expiry Date</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stocks %}
+                        <tr {% if stock.is_expired %}class="expired"{% endif %}>
+                            <td>{{ stock.medicine.name }}</td>
+                            <td>{{ stock.medicine.category.name }}</td>
+                            <td>{{ stock.batch_number }}</td>
+                            <td {% if stock.quantity < 10 %}class="low-stock"{% endif %}>{{ stock.quantity }}</td>
+                            <td>{{ stock.expiry_date|date:"d M Y" }}</td>
+                            <td>₹{{ stock.medicine.price }}</td>
+                            <td>
+                                {% if stock.is_expired %}
+                                    <span class="badge bg-danger">Expired</span>
+                                {% elif stock.quantity < 10 %}
+                                    <span class="badge bg-warning text-dark">Low Stock</span>
+                                {% else %}
+                                    <span class="badge bg-success">Available</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">No stock items available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Medicines List -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Medicines</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-fixed-head">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medicine in medicines %}
+                        <tr>
+                            <td>{{ medicine.name }}</td>
+                            <td>{{ medicine.category.name }}</td>
+                            <td>{{ medicine.description|truncatechars:50 }}</td>
+                            <td>₹{{ medicine.price }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">No medicines available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

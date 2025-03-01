@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Sales History - Medical Shop POS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Sales History</h2>
+        <div>
+            <a href="{% url 'pos' %}" class="btn btn-primary">
+                <i class="fas fa-cash-register"></i> New Sale
+            </a>
+        </div>
+    </div>
+    
+    <!-- Sales Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">All Sales</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-fixed-head">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Sale ID</th>
+                            <th>Date & Time</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Cashier</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in sales %}
+                        <tr>
+                            <td>{{ sale.id }}</td>
+                            <td>{{ sale.timestamp|date:"d M Y, H:i" }}</td>
+                            <td>₹{{ sale.total_amount }}</td>
+                            <td>
+                                {% if sale.payment_method == 'cash' %}
+                                    <span class="badge bg-success">Cash</span>
+                                {% elif sale.payment_method == 'card' %}
+                                    <span class="badge bg-info">Card</span>
+                                {% else %}
+                                    <span class="badge bg-primary">UPI</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ sale.cashier.username }}</td>
+                            <td>
+                                <a href="{% url 'sale_detail' sale.id %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">No sales records found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
